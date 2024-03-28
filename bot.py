@@ -2170,8 +2170,8 @@ async def up_revistas_api(file,usid,msg,username):
 				else:
 								
 
-        usern = "alegria"
-        passw = "Lianet123*#"
+        
+    
         zipssize=30*1024*1024
         filename = file.split("/")[-1]
         host = "https://revistatelematica.cujae.edu.cu/index.php/tele/"
