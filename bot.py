@@ -2170,8 +2170,6 @@ async def up_revistas_api(file,usid,msg,username):
 				else:
 								
 
-async def cujae_api(file,usid,msg,username):
-    try:
         usern = "alegria"
         passw = "Lianet123*#"
         zipssize=30*1024*1024
