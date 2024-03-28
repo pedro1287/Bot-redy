@@ -2168,6 +2168,81 @@ async def up_revistas_api(file,usid,msg,username):
 				if u==url:
 					await msg.edit("®️ Ocurrió un error en su Conexión")
 				else:
+								
+
+async def cujae_api(file,usid,msg,username):
+    try:
+        usern = "alegria"
+        passw = "Lianet123*#"
+        zipssize=30*1024*1024
+        filename = file.split("/")[-1]
+        host = "https://revistatelematica.cujae.edu.cu/index.php/tele/"
+        filesize = Path(file).stat().st_size
+        print(21)
+        headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Mobile Safari/537.36"}
+        proxy = None #Configs[username]["gp"]
+        headers = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0'}
+        #login
+        msg = await msg.edit("🔴 Conectando ... 🔴")
+        connector = aiohttp.TCPConnector()
+        if proxy:
+            connector = aiohttp_socks.ProxyConnector.from_url(proxy)
+        async with aiohttp.ClientSession(connector=connector) as session:
+            async with session.get(host+"login",headers=headers) as resp:
+                html = await resp.text()
+            soup = BeautifulSoup(html,"html.parser")
+            csrfToken = soup.find("input",attrs={"name":"csrfToken"})["value"]
+            payload = {
+                "csrfToken": csrfToken,
+                "source": "",
+                "username": usern,
+                "password": passw,
+                "remember": "1"
+            }
+            async with session.post(host+"login/signIn", data=payload,headers=headers) as e:
+                print(222)
+                print(e.url)
+            #upload
+            if filesize-1048>zipssize:
+                parts = round(filesize / zipssize)
+                await msg.edit(f"📦 𝑪𝒐𝒎𝒑𝒓𝒊𝒎𝒊𝒆𝒏𝒅𝒐\n\n🏷 Total: {parts} partes\n")
+                files = sevenzip(file,volume=zipssize)
+                print(24)
+                links = []
+            else:
+                files = [file]
+                links = []
+            for file in files:
+                try:
+                    payload = {}
+                    payload["name"] = file.split("/")[-1]
+                    payload["revisedFileId"] = ""
+                    payload["genreId"] = "86"
+                    fi = Progress(file,lambda current,total,timestart,filename: uploadfile_progres(current,total,timestart,filename,msg))                               
+                    query = {"uploadedFile":fi,**payload}
+                    async with session.post(host+"$$$call$$$/wizard/file-upload/file-upload-wizard/upload-file?submissionId=655&stageId=1&fileStage=2&reviewRoundId=&assocType=&assocId=",data=query,headers=headers) as resp:
+                        html = await resp.text()
+                    data = loads(html)
+                    ids = data["uploadedFile"]["fileId"]
+                    url = f"{host}$$$call$$$/api/file/file-api/download-file?fileId={ids}&revision=1&submissionId=655&stageId=1"
+                    await bot.send_message(username,url)
+                    links.append(url)
+                except:
+                    pass
+            await msg.edit(f"✅ Finalizado ✅ \n\n{filename}\n[ .txt ] ⤵️")
+            txtname = file.split('.')[0].replace(' ','_')+'.txt'
+            with open(txtname,"w") as t:
+                message = ""
+                for li in links:
+                    message+=li+"\n"
+                t.write(message)
+                t.close()
+            await bot.send_document(usid,txtname,thumb="thumb.jpg",caption=f"👤 Usuario: {usern}\n🔑 Contraseña: {passw}")
+            os.unlink(txtname)
+    except Exception as e:
+        print(str(e))
+
+
 					await msg.edit("🟢 Conectado ...")
 					sleep(5)
 					print(22)
