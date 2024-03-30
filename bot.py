@@ -2139,7 +2139,7 @@ async def up_revistas_api(file,usid,msg,username):
 		filesize = Path(file).stat().st_size
 		print(21)
 		proxy = Configs["gp"]
-		headers = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0'}
+		headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0.4430.72) Gecko/20100101 Chrome/90.0.4430.72 Firefox/109.0'}
 		#login
 		msg = await msg.edit("🔴 Conectando ...")
 		connector = aiohttp.TCPConnector()
